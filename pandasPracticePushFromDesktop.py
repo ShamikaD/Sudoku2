@@ -89,7 +89,7 @@ nursesGlovesDF.drop_duplicates(inplace = True)
 cols = nursesGlovesDF.columns
 #print(cols)
 
-#renaming cols using 
+#renaming cols using pandas
 #method 1: manually
 nursesGlovesDF.rename(columns = {
             "Years Experience" : "yrs exp",
