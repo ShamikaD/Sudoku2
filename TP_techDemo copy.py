@@ -3,10 +3,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as pyp
 import numpy as np
 from numpy import pi
-#hours worked so far 4/8/10 8:30 --> 25 (since meeting with recitaition TA)
 
 #pandas information from the website: https://www.learndatasci.com/tutorials/python-pandas-tutorial-complete-introduction-for-beginners/
-#matplotlib informationfrom: https://matplotlib.org/users/pyplot_tutorial.html
+#matplotlib information from: https://matplotlib.org/users/pyplot_tutorial.html
 #numpy information: https://docs.scipy.org/doc/numpy/user/quickstart.html 
 
 nursesGlovesDF = pd.read_csv("Nurses gloves data - Sheet1 (1).csv", index_col = 0)
