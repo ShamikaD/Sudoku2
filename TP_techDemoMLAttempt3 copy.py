@@ -28,7 +28,7 @@ def partition(data):
     numRowTrain = int(numDataPts * 0.7) #to make a split of 70% for training
     indexList = set(random.sample(list(range(numDataPts)), numRowTrain))
     trainX = pd.DataFrame()
-    testX = pd.DataFrame()
+    testX = pd.DataFrame() 
     trainY = pd.DataFrame()
     testY = pd.DataFrame()
     #puts all the data in indicies that are not training into the testing data
@@ -42,6 +42,7 @@ def partition(data):
     return np.array(trainX), np.array(testX), np.array(trainY), np.array(testY)
 
 trainX, testX, trainY, testY = partition(data)
+print(testX, trainY)
 
 #neural network based on: from website: https://towardsdatascience.com/neural-networks-from-scratch-easy-vs-hard-b26ddc2e89c7
 #sigmoid function: used to normalize values
