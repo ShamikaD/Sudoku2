@@ -5,7 +5,51 @@
 import pandas as pd
 import numpy as np
 import random
+on
+'''
+import time
+start_time = time.time()
 
+dic = {"a": [[[1,2,3],[4,5,6],[7]]],
+        "b": [[[1,2,3]],[[2]]],
+        "c": [[[1,2,3],[4,5,6],[7,8,9]],[[5],[7]]]}
+data = pd.DataFrame.from_dict(dic, orient='index')
+def partition(data):
+    #print(data)
+    allData = pd.DataFrame()
+    rows = list(data.index.values)
+    for r in range(len(rows)):
+        count = 0
+        for c in range(len(list(data.columns.values))):
+            newCol = [data.iloc[r][c]]+[ord(rows[r])]
+            allData = allData.append([newCol])
+            print("working on " + rows[r]+ " "+ str(count))
+            count+=1
+    allData = allData.dropna()
+    y = allData.iloc[::,-1]
+    x = allData.drop(allData.columns[-1],axis=1)
+    print("fixing the dataframe took", (time.time() - start_time)/60, "to run")
+    numDataPts = len(x)
+    numRowTrain = int(numDataPts * 0.8) #to make a split of 80% for training
+    indexList = set(random.sample(list(range(numDataPts)), numRowTrain))
+    #trainX = pd.DataFrame()
+    testX = np.array([])
+    #trainY = pd.DataFrame()
+    testY = np.array([])
+    #puts all the data in indicies that are not training into the testing data
+    for i in range(numDataPts): 
+        if i not in indexList:
+            testX = np.append(testX, x.iloc[i])
+            testY = np.append(testY, y.iloc[i])
+            x = x.drop(x.index[i]) #iloc is used for indexing in pandas data frames
+            y = y.drop(y.index[i])
+            i-=1
+    return np.array(x), testX, np.array(y), testY
+
+trainX, testX, trainY, testY = partition(data)
+print ("partitioning took", time.time() - start_time, "to run")
+aepgm
+'''
 #got data from: http://archive.ics.uci.edu/ml/datasets/Iris 
 data = pd.DataFrame(pd.read_csv("iris.csv"))
 data = data.append(data)
