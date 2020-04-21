@@ -24,6 +24,7 @@ def partition(data):
     data.columns = ['A', "B", "C", "D", "Y"]
     x = data.drop(['Y'], axis = 1)
     y = data["Y"].apply(flowerConversion)
+    print (x)
     numDataPts = len(x)
     numRowTrain = int(numDataPts * 0.7) #to make a split of 70% for training
     indexList = set(random.sample(list(range(numDataPts)), numRowTrain))
@@ -42,7 +43,7 @@ def partition(data):
     return np.array(trainX), np.array(testX), np.array(trainY), np.array(testY)
 
 trainX, testX, trainY, testY = partition(data)
-print(testX, trainY)
+#print(testX, trainY)
 
 #neural network based on: from website: https://towardsdatascience.com/neural-networks-from-scratch-easy-vs-hard-b26ddc2e89c7
 #sigmoid function: used to normalize values
@@ -131,3 +132,4 @@ def accuracy(x, y):
 	
 print("Training accuracy : ", accuracy(trainX, trainY))
 print("Testing accuracy : ", accuracy(testX, testY)) 
+#print(net.w1)
