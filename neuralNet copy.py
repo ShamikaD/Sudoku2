@@ -4,88 +4,9 @@
 
 import pandas as pd
 import numpy as np
-import random
-'''
+import random, pickle
 import time
 start_time = time.time()
-
-dic = {"a": [[[1,2,3],[4,5,6],[7]]],
-        "b": [[[1,2,3]],[[2]]],
-        "c": [[[1,2,3],[4,5,6],[7,8,9]],[[5],[7]]]}
-data = pd.DataFrame.from_dict(dic, orient='index')
-def partition(data):
-    #print(data)
-    allData = pd.DataFrame()
-    rows = list(data.index.values)
-    for r in range(len(rows)):
-        count = 0
-        for c in range(len(list(data.columns.values))):
-            newCol = [data.iloc[r][c]]+[ord(rows[r])]
-            allData = allData.append([newCol])
-            print("working on " + rows[r]+ " "+ str(count))
-            count+=1
-    allData = allData.dropna()
-    y = allData.iloc[::,-1]
-    x = allData.drop(allData.columns[-1],axis=1)
-    print("fixing the dataframe took", (time.time() - start_time)/60, "to run")
-    numDataPts = len(x)
-    numRowTrain = int(numDataPts * 0.8) #to make a split of 80% for training
-    indexList = set(random.sample(list(range(numDataPts)), numRowTrain))
-    #trainX = pd.DataFrame()
-    testX = np.array([])
-    #trainY = pd.DataFrame()
-    testY = np.array([])
-    #puts all the data in indicies that are not training into the testing data
-    for i in range(numDataPts): 
-        if i not in indexList:
-            testX = np.append(testX, x.iloc[i])
-            testY = np.append(testY, y.iloc[i])
-            x = x.drop(x.index[i]) #iloc is used for indexing in pandas data frames
-            y = y.drop(y.index[i])
-            i-=1
-    return np.array(x), testX, np.array(y), testY
-
-trainX, testX, trainY, testY = partition(data)
-print ("partitioning took", time.time() - start_time, "to run")
-aepgm
-'''
-#got data from: http://archive.ics.uci.edu/ml/datasets/Iris 
-data = pd.DataFrame(pd.read_csv("iris.csv"))
-data = data.append(data)
-
-def flowerConversion(flower):
-    if flower == "Iris-setosa":
-        return pd.Series([1,0,0])
-    elif flower == "Iris-versicolor":
-        return pd.Series([0,1,0])
-    elif flower == "Iris-virginica":
-        return pd.Series([0,0,1])
-
-#partitions the data into trainin and testing, and input and output
-#Partition algorithm based off of: https://github.com/maddenmoore/neural-network-visualizer 
-def partition(data):
-    data.columns = ['A', "B", "C", "D", "Y"]
-    x = data.drop(['Y'], axis = 1)
-    y = data["Y"].apply(flowerConversion)
-    numDataPts = len(x)
-    numRowTrain = int(numDataPts * 0.7) #to make a split of 70% for training
-    indexList = set(random.sample(list(range(numDataPts)), numRowTrain))
-    trainX = pd.DataFrame()
-    testX = pd.DataFrame() 
-    trainY = pd.DataFrame()
-    testY = pd.DataFrame()
-    #puts all the data in indicies that are not training into the testing data
-    for i in range(numDataPts): 
-        if i in indexList:
-            trainX = trainX.append(x.iloc[i]) #iloc is used for indexing in pandas data frames
-            trainY = trainY.append(y.iloc[i]).astype(int)
-        else:
-            testX = testX.append(x.iloc[i])
-            testY = testY.append(y.iloc[i]).astype(int)
-    return np.array(trainX), np.array(testX), np.array(trainY), np.array(testY)
-
-trainX, testX, trainY, testY = partition(data)
-print(testX)
 
 #neural network based on: from website: https://towardsdatascience.com/neural-networks-from-scratch-easy-vs-hard-b26ddc2e89c7
 #sigmoid function: used to normalize values
@@ -116,10 +37,10 @@ class NeuralNet:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        amountInputs = x.shape[1]
+        amountInputs = x.shape[1] 
         amountOutputs = y.shape[1]
         #neuron amount calculated by these principles: https://www.heatonresearch.com/2017/06/01/hidden-layers.html
-        neurons = amountInputs * amountOutputs 
+        neurons = 128 #amountInputs * amountOutputs 
         #start with semirandom numbers for weights and biases
         self.w1 = np.random.randn(amountInputs, neurons)
         self.b1 = np.zeros((1, neurons))
@@ -153,14 +74,28 @@ class NeuralNet:
         mostProbableVal = self.layer3.argmax()
         return mostProbableVal
 			
+with open('trainX3.pickle', 'rb') as handle:
+    trainX = pickle.load(handle)
+with open('testX3.pickle', 'rb') as handle:
+    testX = pickle.load(handle)
+with open('trainY.pickle', 'rb') as handle:
+    trainY = pickle.load(handle)
+with open('testY.pickle', 'rb') as handle:
+    testY = pickle.load(handle)
+    
 #object of NeuralNet class
 net = NeuralNet(trainX, trainY)
 
-trainingCycles = 3000 
+trainingCycles = 1500 
 #Trains the net with the training set
+count = 0
 for x in range(trainingCycles):
     net.forward()
     net.back()
+    print ("training... "+ str(1500 - count))
+    print ("training is taking ", (time.time() - start_time)/60, " mins per cycle")
+    count+=1
+print ("training took ", (time.time() - start_time)/60, " to run")
 		
 #returns the accuracy of the network
 #if the prediction is the same as the biggest vaule in y, accuracy goes up by 1
@@ -174,3 +109,7 @@ def accuracy(x, y):
 	
 print("Training accuracy : ", accuracy(trainX, trainY))
 print("Testing accuracy : ", accuracy(testX, testY)) 
+print ("last cycle took", time.time() - start_time, "to run")
+
+with open('neuralNet.pickle', 'wb') as handle:
+    pickle.dump(net, handle, protocol=pickle.HIGHEST_PROTOCOL)
