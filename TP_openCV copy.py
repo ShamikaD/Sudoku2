@@ -21,7 +21,7 @@ import pickle
 #                      how to clean up the image (no stray/grey marks and make greyscale)
 #                        --> This is only really needed for people who just want a cleaner image returned
 ############################################################################################  
-#tutorial for image processing here (telss how to open images with PIL): https://note.nkmk.me/en/python-numpy-image-processing/
+#tutorial for image processing here (tells how to open images with PIL): https://note.nkmk.me/en/python-numpy-image-processing/
 
 '''
 #gets rid of transparency values (takes a really long time and is (maybe0 not really needed)
@@ -63,16 +63,6 @@ def makeBinary(pic):
         binPic.append(ncol)
     return np.array(binPic)
 
-#this gets rid of all the rows of white space
-def onlyLetterRows(binPic):
-    binPicNoLine = []
-    i=0
-    while i < binPic.shape[0]:
-        if 0 in binPic[i]:
-            binPicNoLine.append(binPic[i])
-        i+=1
-    return np.array(binPicNoLine)
-
 def getRidOfEmptyStartRows(img):
     i=0
     while i < img.shape[0]:
@@ -103,10 +93,18 @@ def resize (letter):
     letter = np.array(letter.drop(letter.columns[toDrop],axis=1))
     #this is adding back the white space around each letter to make it 128 by 128
     addToLeft = (128 - letter.shape[1])//2
-    addToRight = 128 - addToLeft
+    left = np.ones((addToLeft, letter.shape[0]), dtype=int)
+    letter = np.concatenate((left.T, letter), axis=1)
+    addToRight = 128 - letter.shape[1]
+    right = np.ones((addToRight, letter.shape[0]), dtype=int)
+    letter = np.concatenate((letter, right.T), axis=1)
 
     addToTop = (128 - letter.shape[0])//2
-    addToBottom = 128 - addToTop
+    top = np.ones((addToTop, letter.shape[1]), dtype=int)
+    letter = np.concatenate((top, letter), axis=0)
+    addToBottom = 128 - letter.shape[0]
+    bottom = np.ones((addToBottom, letter.shape[1]), dtype=int)
+    letter = np.concatenate((letter, bottom), axis=0)
     return letter
 
 def getRidOfEmptyStartCols(line):
@@ -132,7 +130,7 @@ def getLettersFromLine(line, letters):
                 nonLetterCols = list(range(i, len(line.columns)))
                 letter = np.array(line.drop(line.columns[nonLetterCols],axis=1))
                 if letter.shape[1] >= 20:
-                    letters.append(resize(onlyLetterRows(letter)))
+                    letters.append(resize(letter))
                 newLine = line.drop(line.columns[letterCols],axis=1)
                 return getLettersFromLine(np.array(newLine), letters)
             i+=1
@@ -156,15 +154,7 @@ def flatten(arr):
     for l in arr: #this is to flatten the array
         newArr.extend(l)
     return pd.DataFrame(newArr)
-'''
-def getLetters(imageName):
-    pic = np.array(Image.open(imageName), np.int) #I think the last one is transparency (maybe)
-    line = makeBinary(pic)
-    let = getLettersFromLine(line, [])
-    for letter in let:
-        print(letter.shape)
-    np.savetxt("binPicNoLine.csv", let[1], delimiter=",")
-'''
+
 def getAllLetters(imageName):
     pic = np.array(Image.open(imageName), np.int)
     binPic = makeBinary(pic)
@@ -175,9 +165,9 @@ def getAllLetters(imageName):
     for l in allLetters:
         for letters in l:
             print(letters.shape)
+            np.savetxt('test.csv', letters, delimiter=',')
     return allLetters
 
 real = 'helloBob.png'
 print("This code complies! :)")
-#getLetters(real)
 getAllLetters(real)
