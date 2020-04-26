@@ -14,7 +14,6 @@ import random
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from imageToBoardWorks import forNet
-from backtracking import isLegalSudoku
 import time
 
 #The dataset that I'm using to train is from :
@@ -123,29 +122,7 @@ class NeuralNet:
 #object of NeuralNet class
 net = NeuralNet(trainX/16, trainY) #divide by 16 because 16 is the largest number present in the images
 
-trainingCycles = 1500 
-#Trains the net with the training set
-count = 0
-
-#returns the accuracy of the network
-#if the prediction is the same as the biggest vaule in y, accuracy goes up by 1
-#used: to get the accuracy of the network for the training data and the testing data
-def accuracy(x, y): 
-    accuracy = 0
-    for i in range(len(x)):
-        if net.predict(x[i]) == np.argmax(y[i]):
-            accuracy += 1
-    return (accuracy/len(x))*100 #returns the accuracy as a percentage of the data set accurately predicted
-	
-for x in range(trainingCycles):
-    net.forward()
-    net.back()
-    print ("training... "+ str(1500 - count))
-    count+=1
-print ("training took ", (time.time() - begin)/60, " to run")
-print("Training accuracy : ", accuracy(trainX/16, trainY))
-print("Testing accuracy : ", accuracy(testX/16, testY)) 
-
+#Converts the results of the neural network into a sudoku board
 def test(userInput):
     hand = forNet(userInput)
     board = []
@@ -154,23 +131,15 @@ def test(userInput):
         for num in line:
             ln.append(net.predict(num))
         board.append(ln)
-    return(board)
+    return board
 
-# got reminded how to take in input from here: https://www.geeksforgeeks.org/taking-input-in-python/
-userInput = input("Please enter the name of an image that you have placed in the folder: ") 
-readOrSud = input("Would you like this to be read or checked for Sudoku? (\"r\"/\"s\"): ") 
-
-total = test(userInput)
-if readOrSud == "r":
-    s = ""
-    for row in total:
-        for col in row:
-            s+=str(col)
-        s+="\n"
-    print(s)
-else:
-    legal = isLegalSudoku(total)
-    if legal == False:
-        print("This board is not a legal Sudoku board")
-    else:
-        print("This board is a legal Sudoku board")
+#trains the network and returns the result from user input (image to 2D list)
+def runNet(userInput):
+    count = 0
+    trainingCycles = 2000 
+    for x in range(trainingCycles):
+        net.forward()
+        net.back()
+        print ("training... "+ str(2000 - count))
+        count +=1
+    return test(userInput)

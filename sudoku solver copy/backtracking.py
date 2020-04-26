@@ -1,6 +1,7 @@
+#numpy came with anacoda, which I downloaded from: https://docs.anaconda.com/anaconda/install/
 import numpy as np
 import math, copy
-#This is my work from homework 5 
+#Checking if the board is legal my work from 15-112 homework 5 from this year
 #guidelines for that homework are here: http://www.cs.cmu.edu/~112/notes/hw5.html
 
 #returns if a given sudoku board is legal (it has all allowed numbers in its 
@@ -65,70 +66,36 @@ def findCoords(board, target):
         for col in range (len(board[0])):
             if board[row][col] == target:
                 return (row,col)
-
-
-    
-
-    ##########################################################################
-    #           check if the board is legal                                  #
-    #           if it is, solve using backtracking                           #
-    ##########################################################################      
-    
+         
+#returns the solved puzzle (wrapper function for solver)
 def solvePuzzle(board):
     numbers = [1,2,3,4,5,6,7,8,9]
     poss = getPossibleSpots(board)
-    print (solver(numbers, board, poss))
+    return solver(numbers, board, poss)
     
+#returns the solved puzzle
 def solver(numbers, board, poss):
-    print2dList (board)
-    if 0 not in np.array(board).flatten():
+    if poss==[]:
         return board
     else:
-        for spot in poss:
-            for number in numbers:
-                b = copy.deepcopy(board)
-                b[spot[0]][spot[1]] = number
-                if isLegalSudoku(b):
-                    board[spot[0]][spot[1]] = number
-                    if (solver(numbers, board, poss)):
-                        return True
-                    else:
-                        board[spot[0]][spot[1]] == 0
-                    return False
-        return True
-'''
-                r,c  = possibleSpots[i]
-                sol[r][c] = number
-                solved = solver(possibleSpots[1:], numbers, sol)
-                if solved != None:
+        spot= poss[0]
+        #tries to place every number into each spot
+        for number in numbers:
+            #makes a copy of the board to check if the move will be legal
+            b = copy.deepcopy(board)
+            b[spot[0]][spot[1]] = number
+            if isLegalSudoku(b) and board[spot[0]][spot[1]] == 0:
+                board[spot[0]][spot[1]] = number
+                #recursive call to see if it needs to backtrack anywhere
+                solved = solver(numbers, board, poss[1:])
+                if solved != False:
                     return solved
                 else:
-                    sol[r][c] = 0
-        return None
+                    #resets the space for backtracking
+                    board[spot[0]][spot[1]] = 0
+        return False
 
-
-
-    def solver(rules, aPosition, letters, sol):
-        if 0 not in flatten(sol):
-            return sol
-        else:
-            #tries to place a number in the next legal position 
-            number = numbers[0]
-            directions = [(-1, -1), (-1, 0), (-1, 1),
-                        (0, -1),  (0, 0),  (0, 1),
-                        (1, -1),  (1, 0),  (1, 1)]
-            for change in directions:
-                row = aPosition[0] + change[0]
-                col = aPosition[1] + change[1]
-                if isLegalSudoku(board) and sol[row][col] == None:
-                    sol[row][col] = letter
-                    solution = solver(rules, (row, col), letters[1:], sol)
-                    if solution != None:
-                        return solution
-                    else:
-                        sol[row][col] = None
-            return None
-'''
+#returns a list of indicies where there are open spots
 def getPossibleSpots(board):
     spots = []
     for i in range (len(board)):
@@ -137,51 +104,10 @@ def getPossibleSpots(board):
                 spots.append((i,j))
     return spots
 
-board = [
-    [ 0, 0, 0, 1, 0, 5, 0, 0, 0 ],
-    [ 1, 4, 0, 0, 0, 0, 6, 7, 0 ],
-    [ 0, 8, 0, 0, 0, 2, 4, 0, 0 ],
-    [ 0, 6, 3, 0, 7, 0, 0, 1, 0 ],
-    [ 9, 0, 0, 0, 0, 0, 0, 0, 3 ],
-    [ 0, 1, 0, 0, 9, 0, 5, 2, 0 ],
-    [ 0, 0, 7, 2, 0, 0, 0, 8, 0 ],
-    [ 0, 2, 6, 0, 0, 0, 0, 3, 5 ],
-    [ 0, 0, 0, 4, 0, 9, 0, 0, 0 ]
-    ]
-
-
-def maxItemLength(a):
-    maxLen = 0
-    rows = len(a)
-    cols = len(a[0])
-    for row in range(rows):
-        for col in range(cols):
-            maxLen = max(maxLen, len(str(a[row][col])))
-    return maxLen
-
-# Because Python prints 2d lists on one row,
-# we might want to write our own function
-# that prints 2d lists a bit nicer.
-def print2dList(a):
-    if (a == []):
-        # So we don't crash accessing a[0]
-        print([])
-        return
-    rows = len(a)
-    cols = len(a[0])
-    fieldWidth = maxItemLength(a)
-    print("[ ", end="")
-    for row in range(rows):
-        if (row > 0): print("\n  ", end="")
-        print("[ ", end="")
-        for col in range(cols):
-            if (col > 0): print(", ", end="")
-            # The next 2 lines print a[row][col] with the given fieldWidth
-            formatSpec = "%" + str(fieldWidth) + "s"
-            print(formatSpec % str(a[row][col]), end="")
-        print(" ]", end="")
-    print("]")
-
-
-print(solvePuzzle(board))#(getPossibleSpots(board))#isLegalSudoku(board)) 
+# returns a list of all the values in the given list without any nested lists
+def flatten(tot):#nested, first = True): 
+    bob = []
+    for l in tot:
+        bob.extend(l)
+    return bob
 
