@@ -177,6 +177,7 @@ def getAllLetters(fileName):
         greyLets.append(newGreyLin)
     return greyLets
 
+#makes all the images into a format that is close to the training data for the neural network
 def forNet(fileName):
     lets = getAllLetters(fileName)
     lines = []
