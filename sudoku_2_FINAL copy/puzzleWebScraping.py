@@ -1,3 +1,5 @@
+#This file webscrapes to find new puzzles every time you restart the game
+
 #requests and beutiful soup came with anacoda, which I downloaded from: https://docs.anaconda.com/anaconda/install/
 import requests
 from bs4 import BeautifulSoup
