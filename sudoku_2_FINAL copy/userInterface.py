@@ -1,3 +1,5 @@
+#This is the UI and graphics file that handles all the user interactions
+
 #these are all my own code that are in the folder for this project
 from neuralNetDigits import runNet
 from backtracking import isLegalSudoku, solvePuzzle
@@ -6,7 +8,7 @@ from puzzleWebScraping import getSudoku
 from cmu_112_graphics import *
 #numpy came with anacoda, which I downloaded from: https://docs.anaconda.com/anaconda/install/
 import numpy as np
-import random, copy, os, math
+import os, math
 
 #sets up for the board and the state of the game
 def appStarted(app):
@@ -14,8 +16,8 @@ def appStarted(app):
     app.board = getDefaultBoard()
     app.rows = len(app.board)
     app.cols = len(app.board[0])
-    app.cellHeight = (app.height-2*app.margin)/app.rows
-    app.cellWidth = (app.width-2*app.margin)/app.rows
+    app.cellHeight = (app.height - 2 * app.margin) / app.rows
+    app.cellWidth = (app.width - 2 * app.margin)/app.cols
     app.boardColors = getBoardColors(app)
     app.state = 'menu'
     app.isCorrecting = False
@@ -104,13 +106,12 @@ def keyPressedMenu(app, key):
         app.state = "playable"
     elif key == 'c':
         txtFile = open("yourText.txt", "w")
-        print(app.board)
-        s = ""
+        string = ""
         for row in app.board:
             for col in row:
-                s+=str(col)
-            s+="\n"
-        txtFile.write(s)
+                string += str(col)
+            string += "\n"
+        txtFile.write(string)
         txtFile.close()
 
 #handles all the keypresses when the user is on the neural network screen
@@ -142,9 +143,9 @@ def mousePressed(app, event):
     y = event.y
     if app.state == "gameBoard":
         #checks if the area clicked is within the bounds of the playable area
-        if (x > app.margin and x < app.width-app.margin and
-            y > app.margin and y < app.height-app.margin):
-            col, row = getCellCoords(app, x ,y)
+        if (x > app.margin and x < app.width - app.margin and
+            y > app.margin and y < app.height - app.margin):
+            row, col = getCellCoords(app, x ,y)
             #allows the cell to be selected if you are in correcting mode or if it is a playable cell
             if app.isCorrecting == True or app.boardColors[row][col] == 'red':
                 app.currCell = (row, col)
@@ -156,8 +157,8 @@ def mousePressed(app, event):
 #Keeps updating the cell height and width so that they can be resized with the window
 #also keeps updating the colours of the board when the user is correcting it
 def timerFired(app):
-    app.cellHeight = (app.height-2*app.margin)/app.rows
-    app.cellWidth = (app.width-2*app.margin)/app.rows
+    app.cellHeight = (app.height - 2 * app.margin) / app.rows
+    app.cellWidth = (app.width - 2 * app.margin) / app.cols
     if app.isCorrecting:
         app.boardColors = getBoardColors(app)
     
@@ -168,27 +169,27 @@ def drawGameBoard(app, canvas):
     lastCol = app.cols * app.cellHeight + app.margin
     canvas.create_rectangle(lastRow, app.margin, lastRow+1, app.height - app.margin, 
         fill = "black")
-    canvas.create_rectangle(app.margin, lastCol-1, app.width - app.margin, lastCol+1, 
+    canvas.create_rectangle(app.margin, lastCol - 1, app.width - app.margin, lastCol+1, 
         fill = "black")
     for r in range (app.rows):
         for c in range(app.cols):
-            row = r * app.cellWidth + app.margin
-            col = c * app.cellHeight + app.margin
+            col = c * app.cellWidth + app.margin
+            row = r* app.cellHeight + app.margin
             #draws the lines on the board
-            canvas.create_rectangle(row, col, row + app.cellWidth, 
-                col+app.cellHeight)
+            canvas.create_rectangle(col, row, col + app.cellWidth, 
+                row+app.cellHeight)
             if r% math.sqrt(app.rows) == 0:
-                canvas.create_rectangle(row-1, app.margin, row+1, app.height - app.margin, 
+                canvas.create_rectangle(app.margin, row - 1, app.width - app.margin, row + 1, 
                     fill = "black")
             if c% math.sqrt(app.cols) == 0:
-                canvas.create_rectangle(app.margin, col-1, app.width - app.margin, col+1, 
+                canvas.create_rectangle(col - 1, app.margin, col + 1, app.height - app.margin, 
                     fill = "black")
             #Draws the numbers
-            canvas.create_text(row + 0.5*app.cellWidth, col + 0.5*app.cellHeight, 
+            canvas.create_text(col + 0.5*app.cellWidth, row + 0.5*app.cellHeight,
                 text = str(app.board[r][c]), font='Arial '+str(int(app.cellHeight/2)), 
                     fill = app.boardColors[r][c])
             if r == app.currCell[0] and c == app.currCell[1]:
-                canvas.create_text(row + 0.5*app.cellWidth, col + 0.5*app.cellHeight, 
+                canvas.create_text(col + 0.5*app.cellWidth, row + 0.5*app.cellHeight,
                     text = str(app.board[r][c]), font='Arial '+str(int(app.cellHeight/2)), 
                         fill = "green")
 

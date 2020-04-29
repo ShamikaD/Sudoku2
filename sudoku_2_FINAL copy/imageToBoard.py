@@ -1,3 +1,5 @@
+#This file converts the images into a 2D list of numbers that the neural network can read from
+
 #pandas, numpy, and matplotlib all came with anacoda, which I downloaded
 # from here: https://docs.anaconda.com/anaconda/install/
 

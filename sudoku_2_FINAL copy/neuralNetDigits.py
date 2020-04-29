@@ -1,18 +1,16 @@
+#This file is my neural network that predicts digits from the converted images
+
 #pandas, numpy, and matplotlib all came with anacoda, which I downloaded
 # from here: https://docs.anaconda.com/anaconda/install/
 
 #I taught myself pandas from: 
 #https://www.learndatasci.com/tutorials/python-pandas-tutorial-complete-introduction-for-beginners/
 #The rest of the pandas information that I learned is from: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
-#I taught myself matplotlib from: https://matplotlib.org/users/pyplot_tutorial.html
-#the rest of the matplotlib information is from: https://matplotlib.org/tutorials/index.html#introductory
 #I taught myself numpy from: https://docs.scipy.org/doc/numpy/user/quickstart.html
 #the rest of the numpy information is from: https://docs.scipy.org/doc/numpy/reference/
 import pandas as pd
 import numpy as np
 import random
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 #This is my own function that gets the image data to put through the neural network
 from imageToBoard import forNet
 #The dataset that I'm using to train is from :

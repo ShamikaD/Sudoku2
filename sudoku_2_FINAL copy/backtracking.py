@@ -1,5 +1,6 @@
-#numpy came with anacoda, which I downloaded from: https://docs.anaconda.com/anaconda/install/
-import numpy as np
+#This file does the backtracking to solve the board and checks if it is legal
+
+
 import math, copy
 #Checking if the board is legal my work from 15-112 homework 5 from this year
 #guidelines for that homework are here: http://www.cs.cmu.edu/~112/notes/hw5.html
@@ -71,6 +72,8 @@ def findCoords(board, target):
 def solvePuzzle(board):
     numbers = [1,2,3,4,5,6,7,8,9]
     poss = getPossibleSpots(board)
+    if isLegalSudoku(board) == False:
+        return False
     return solver(numbers, board, poss)
     
 #returns the solved puzzle
